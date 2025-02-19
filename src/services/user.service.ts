@@ -1,7 +1,10 @@
-import { CreateUserDto } from "../dtos/users.dto.js";
+import { CreateUserDto, UpdateUserDto } from "../dtos/users.dto.js";
 import { CONFIG } from "../config/index.js";
 import { COLLECTION_NAMES } from "../constants/index.js";
 import {
+  Collection,
+  DeleteResult,
+  FindCursor,
   InsertOneResult,
   MongoClient,
   ObjectId,
@@ -20,11 +23,13 @@ export class UserService {
   }
   private async connect() {
     await this.client.connect();
-    return this.client.db(dbName).collection<User>(collection);
+    return this.client
+      .db(dbName)
+      .collection<User>(collection) as Collection<User>;
   }
   public async save(newUser: CreateUserDto): Promise<InsertOneResult<User>> {
     try {
-      const userCollection = await this.connect();
+      const userCollection: Collection<User> = await this.connect();
       const user: User = {
         ...newUser,
         createdAt: new Date(),
@@ -43,12 +48,68 @@ export class UserService {
   }
 
   public async getUserById(id: string) {
-    const userCollection = await this.connect();
-    const objectId : ObjectId = new ObjectId(id)
-    console.log(id)
-    console.log(objectId)
-    const response = await userCollection.findOne({_id : objectId });
-    console.log(response);
-    return response;
+    try {
+      const userCollection: Collection<User> = await this.connect();
+      const objectId: ObjectId = new ObjectId(id);
+      const response: User = await userCollection.findOne({ _id: objectId });
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
+  }
+  public async getAlUsers() {
+    try {
+      const userCollection: Collection<User> = await this.connect();
+      const users = await userCollection.find({}).toArray();
+      return users;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
+  }
+  public async deleteUser(id: string): Promise<boolean> {
+    try {
+      const userCollection: Collection<User> = await this.connect();
+      const _id: ObjectId = new ObjectId(id);
+      const response: DeleteResult = await userCollection.deleteOne({ _id });
+      return response.acknowledged;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
+  }
+  public async upateUser(updateUserObject: UpdateUserDto) {
+    try {
+      const userCollection: Collection<User> = await this.connect();
+      const { _id, ...updatedFields } = updateUserObject;
+
+      const noUndefinedValuesObject: Partial<UpdateUserDto> = Object.keys(
+        updatedFields
+      ).reduce((prevValue, key) => {
+        if (updatedFields[key as keyof UpdateUserDto] !== undefined) {
+          prevValue[key as keyof UpdateUserDto] =
+            updatedFields[key as keyof UpdateUserDto];
+        }
+        return prevValue;
+      }, {} as Partial<UpdateUserDto>);
+      delete (noUndefinedValuesObject as any)._id;
+      const response = await userCollection.updateOne(
+        { _id: _id },
+        { $set: { ...noUndefinedValuesObject, updatedAt: new Date() } }
+      );
+      if (response.matchedCount === 0) {
+        throw new Error("User does not exist");
+      }
+
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
   }
 }
