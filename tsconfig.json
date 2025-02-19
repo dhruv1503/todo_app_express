@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "baseUrl": "./src",
+    "outDir": "dist",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": ["src/**/*"],
+
+}
