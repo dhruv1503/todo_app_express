@@ -2,9 +2,12 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import http from "http";
 import { MongoClient } from "mongodb";
+
 import { CONFIG } from "./config/index.js";
-import userRouter from "./routes/user.route.js";
 import { ROUTER_PREFIX } from "./constants/index.js";
+
+import userRouter from "./routes/user.route.js";
+import projectRoute from "./routes/project.route.js";
 
 const app = express();
 const dbName = CONFIG.DB_NAME;
@@ -23,6 +26,7 @@ app.get("/", (request: Request, response: Response) => {
 });
 
 app.use(ROUTER_PREFIX.users, userRouter);
+app.use(ROUTER_PREFIX.projects, projectRoute)
 
 const client = new MongoClient(CONFIG.MONGO_URI);
 
