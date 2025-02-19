@@ -15,7 +15,6 @@ export class ProjectsController {
           .status(400)
           .json({ message: "Body is required to create a Project" });
       }
-      console.log(request.query)
       const userId = request.query.userId as string;
       if (!userId) {
         return response
