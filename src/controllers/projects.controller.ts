@@ -15,8 +15,9 @@ export class ProjectsController {
           .status(400)
           .json({ message: "Body is required to create a Project" });
       }
-      const user = request.query.user as string;
-      if (!user) {
+      console.log(request.query)
+      const userId = request.query.userId as string;
+      if (!userId) {
         return response
           .status(400)
           .json({ message: "User is required to create a Project" });
@@ -30,13 +31,13 @@ export class ProjectsController {
         description,
       } = request.body;
 
-      const userId = new ObjectId(user);
+      const userIdObject = new ObjectId(userId);
 
       const newProjectDto: CreateProjectDto = new CreateProjectDto(
         title,
         status,
         startDate,
-        userId,
+        userIdObject,
         endDate,
         tasks,
         description
