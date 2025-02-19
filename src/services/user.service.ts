@@ -2,7 +2,8 @@ import { CreateUserDto } from "../dtos/users.dto.js";
 import { CONFIG } from "../config/index.js";
 import { COLLECTION_NAMES } from "../constants/index.js";
 import {
-    FindCursor,
+  DeleteResult,
+  FindCursor,
   InsertOneResult,
   MongoClient,
   ObjectId,
@@ -44,14 +45,38 @@ export class UserService {
   }
 
   public async getUserById(id: string) {
-    const userCollection = await this.connect();
-    const objectId : ObjectId = new ObjectId(id)
-    const response = await userCollection.findOne({_id : objectId });
-    return response;
+    try {
+      const userCollection = await this.connect();
+      const objectId: ObjectId = new ObjectId(id);
+      const response : User = await userCollection.findOne({ _id: objectId });
+      return response;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
   }
-  public async getAlUsers(){
-    const userCollection = await this.connect();
-    const users =  userCollection.find({}).toArray();
-    return users
-  } 
+  public async getAlUsers() {
+    try {
+      const userCollection = await this.connect();
+      const users = await userCollection.find({}).toArray();
+      return users;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
+  }
+  public async deleteUser(id: string): Promise<boolean> {
+    try {
+      const userCollection = await this.connect();
+      const _id: ObjectId = new ObjectId(id);
+      const response: DeleteResult = await userCollection.deleteOne({ _id });
+      return response.acknowledged;
+    } catch (error) {
+      throw error;
+    } finally {
+      this.client.close();
+    }
+  }
 }

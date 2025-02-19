@@ -1,4 +1,4 @@
-import { CreateUserDto, GetUserDto } from "../dtos/users.dto.js";
+import { CreateUserDto, DeleteUserDto, GetUserDto } from "../dtos/users.dto.js";
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service.js";
 import { User } from "interface/user.interface.js";
@@ -36,15 +36,16 @@ export class UserController {
   async getUserById(request: Request, response: Response) {
     try {
       const { _id } = request.params;
-      console.log("from params ", _id);
       const getUserByIdDto = new GetUserDto(_id);
-      const result = await this.service.getUserById(_id);
-      return response
+      const result : User | null = await this.service.getUserById(getUserByIdDto._id);
+      if(result){
+        return response
         .status(200)
         .json({ user: result, message: "User found Successfully !" });
+      }
+      throw new Error("User does not exist")
     } catch (error) {
-      console.log(error);
-      return response.sendStatus(404).json({ message: error });
+      return response.status(404).json({ message: error.message || "Some error occured" });
     }
   }
   async getUsers(request: Request, response: Response) {
@@ -58,7 +59,21 @@ export class UserController {
           message: "All Users found Successfully !",
         });
     } catch (error) {
-      return response.sendStatus(400).json({ message: "Some error occured" });
+      return response.status(400).json({ message: "Some error occured" });
+    }
+  }
+  async deleteUsers(request: Request, response : Response){
+    try{
+      const {_id} = request.params;
+      const deleteUserDto : DeleteUserDto = new DeleteUserDto(_id);
+      const userDeleted : boolean = await this.service.deleteUser(deleteUserDto._id);
+      if(userDeleted) {
+        return response.status(200).json({message : "User deleted successfully"})
+      }
+      throw new Error("Unable to delete User")
+    }
+    catch(error){
+      return response.status(400).json({ message: "Some error occured" });
     }
   }
 }
