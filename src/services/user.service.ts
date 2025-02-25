@@ -12,14 +12,14 @@ import {
 } from "mongodb";
 import { User } from "../interface/user.interface.js";
 
-const uri: string = CONFIG.MONGO_URI;
-const dbName: string = CONFIG.DB_NAME;
+const uri = process.env.MONGO_URI;
+const dbName= process.env.DB_NAME;
 const collection: string = COLLECTION_NAMES.users;
 
 export class UserService {
   private client: MongoClient;
   constructor() {
-    this.client = new MongoClient(uri);
+    this.client = new MongoClient(uri as string);
   }
   private async connect() {
     await this.client.connect();
@@ -51,7 +51,7 @@ export class UserService {
     try {
       const userCollection: Collection<User> = await this.connect();
       const objectId: ObjectId = new ObjectId(id);
-      const response: User = await userCollection.findOne({ _id: objectId });
+      const response: WithId<User> | null = await userCollection.findOne({ _id: objectId });
       return response;
     } catch (error) {
       throw error;

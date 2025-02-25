@@ -6,7 +6,7 @@ import {
 } from "../dtos/users.dto.js";
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service.js";
-import { User } from "interface/user.interface.js";
+import { User } from "../interface/user.interface.js";
 import { InsertOneResult, ObjectId } from "mongodb";
 
 export class UserController {
@@ -14,7 +14,7 @@ export class UserController {
   constructor() {
     this.service = new UserService();
   }
-  async saveUser(request: Request, response: Response) {
+  async saveUser(request: Request, response: Response) : Promise<any> {
     try {
       const { firstName, lastName, age, email, gender, password } =
         request.body;
@@ -30,15 +30,15 @@ export class UserController {
         createUserDto
       );
       const userId = result.insertedId.toHexString();
-      response
+      return response
         .status(201)
         .json({ user: userId, message: "User Created Successfully!" });
     } catch (error) {
       console.log(error);
-      response.status(400).json({ message: error });
+      return response.status(400).json({ message: error });
     }
   }
-  async getUserById(request: Request, response: Response) {
+  async getUserById(request: Request, response: Response) : Promise<any> {
     try {
       const { _id } = request.params;
       const getUserByIdDto = new GetUserDto(_id);
@@ -51,13 +51,13 @@ export class UserController {
           .json({ user: result, message: "User found Successfully !" });
       }
       throw new Error("User does not exist");
-    } catch (error) {
+    } catch (error : any) {
       return response
         .status(404)
-        .json({ message: error.message || "Some error occured" });
+        .json({ message: error?.message || "Some error occured" });
     }
   }
-  async getUsers(request: Request, response: Response) {
+  async getUsers(request: Request, response: Response) : Promise<any> {
     try {
       const users = await this.service.getAlUsers();
       response.status(200).json({
@@ -69,7 +69,7 @@ export class UserController {
       return response.status(400).json({ message: "Some error occured" });
     }
   }
-  async deleteUsers(request: Request, response: Response) {
+  async deleteUsers(request: Request, response: Response) : Promise<any> {
     try {
       const { _id } = request.params;
       const deleteUserDto: DeleteUserDto = new DeleteUserDto(_id);
@@ -86,7 +86,7 @@ export class UserController {
       return response.status(400).json({ message: "Some error occured" });
     }
   }
-  async updateUser(request: Request, response: Response) {
+  async updateUser(request: Request, response: Response) : Promise<any> {
     try {
       const { _id } = request.params;
       console.log(_id);
@@ -113,7 +113,7 @@ export class UserController {
       return response
         .status(200)
         .json({ user: result, message: "User updated successfully!" });
-    } catch (error) {
+    } catch (error  : any) {
       console.log(error);
       return response
         .status(500)

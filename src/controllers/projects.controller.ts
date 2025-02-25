@@ -8,7 +8,7 @@ export class ProjectsController {
   constructor() {
     this.service = new ProjectService();
   }
-  async createProject(request: Request, response: Response) {
+  async createProject(request: Request, response: Response) : Promise<any> {
     try {
       if (!request.body || Object.keys(request.body).length <= 0) {
         return response
@@ -50,7 +50,7 @@ export class ProjectsController {
       return response.status(400).json({
         message: "New Project could not be created. Please try again!",
       });
-    } catch (error) {
+    } catch (error : any) {
       return response.status(500).json({
         message: error.message ?? "Some error occured, Please try again later!",
       });

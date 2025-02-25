@@ -1,7 +1,8 @@
+import { Project } from "../interface/project.interface.ts";
 import { CONFIG } from "../config/index.js";
 import { COLLECTION_NAMES } from "../constants/index.js";
 import { CreateProjectDto } from "../dtos/project.dto.js";
-import { MongoClient } from "mongodb";
+import { InsertOneResult, MongoClient } from "mongodb";
 
 
 const uri = CONFIG.MONGO_URI;
@@ -17,10 +18,10 @@ private async connect(){
     await this.client.connect()
     return this.client.db(dbName).collection(collectionName)
 }
-public async save(newProjectDto : CreateProjectDto){
+public async save(newProjectDto : CreateProjectDto) : Promise<InsertOneResult<Project>>{
     try{
         const projectsCollection = await this.connect();
-        const result = await projectsCollection.insertOne(newProjectDto);
+        const result : InsertOneResult<Project> = await projectsCollection.insertOne(newProjectDto);
         return result
         
        

@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { TProjectStatus } from "types/projectStatus.type.js";
+import { TProjectStatus } from "../types/projectStatus.type.js";
 
 export interface Project {
     _id : ObjectId,

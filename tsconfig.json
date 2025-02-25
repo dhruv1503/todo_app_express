@@ -1,17 +1,55 @@
+// {
+//   "compilerOptions": {
+//     "module": "NodeNext",
+//     "moduleResolution": "nodenext",
+//     "baseUrl": "./src",
+//     "outDir": "dist",
+//     "noImplicitAny": true,
+//     "sourceMap": true,
+//     "esModuleInterop": true,
+//     "allowSyntheticDefaultImports": true
+//   },
+//   "ts-node": {
+//     "esm": true
+//   },
+//   "include": ["src/**/*"],
+
+// }
+
+// {
+//   "compilerOptions": {
+//     "skipLibCheck": true,
+//     "module": "ESNext",
+//     "moduleResolution": "bundler",
+//     "target": "ESNext",
+//     "isolatedModules": true,
+//     "esModuleInterop": true,
+//     "noEmit": true,
+//     "allowImportingTsExtensions": true,
+//     "outDir": "dist",
+//     "lib": [ "esnext" ],
+//     "types": [ "node" ],
+//     "baseUrl": "./src",
+//   },
+//   "exclude": [ "node_modules" ],
+//   "include": [
+//     "src/**/*.ts",
+//     "bin/*.ts"
+//   ]
+// }
+
 {
   "compilerOptions": {
+    "target": "ESNext",
     "module": "NodeNext",
-    "moduleResolution": "nodenext",
-    "baseUrl": "./src",
-    "outDir": "dist",
-    "noImplicitAny": true,
-    "sourceMap": true,
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
-  },
-  "ts-node": {
-    "esm": true
-  },
-  "include": ["src/**/*"],
-
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+  }
 }
+
+

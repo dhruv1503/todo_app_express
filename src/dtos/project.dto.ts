@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { TProjectStatus } from "types/projectStatus.type.js";
+import { TProjectStatus } from "../types/projectStatus.type.ts";
 
 export class CreateProjectDto {
   title: string;
